@@ -1,0 +1,7 @@
+{% extends "base.html" %}
+{% block title %}My Watchlist · CineMatch{% endblock %}
+{% block content %}
+<section class="page-intro"><p class="eyebrow">YOUR PERSONAL COLLECTION</p><h1>My watchlist</h1><p>Keep track of films you want to watch next.</p></section>
+{% if movies %}<div class="movie-grid">{% for movie in movies %}<article class="movie-card"><a class="poster poster-{{ (movie.id % 8) + 1 }}" href="{{ url_for('movie_detail', movie_id=movie.id) }}"><span class="poster-mark">{{ movie.title[0] }}</span><span class="poster-title">{{ movie.title }}</span><span class="poster-year">{{ movie.year }}</span></a><div class="movie-info"><div class="movie-title-line"><a class="movie-title" href="{{ url_for('movie_detail', movie_id=movie.id) }}">{{ movie.title }}</a><span class="rating">★ {{ "%.1f"|format(movie.rating) }}</span></div><p class="genres">{{ movie.genres|join(" · ") }}</p><form method="post" action="{{ url_for('remove_watchlist', movie_id=movie.id) }}"><button class="small-button" type="submit">Remove</button></form></div></article>{% endfor %}</div>
+{% else %}<div class="empty-state"><h3>Your watchlist is empty</h3><p>Save films from Discover to see them here.</p><a class="button-link" href="{{ url_for('index') }}">Explore movies</a></div>{% endif %}
+{% endblock %}

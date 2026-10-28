@@ -1,0 +1,43 @@
+trigger:
+  - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  pythonVersion: '3.11'
+
+steps:
+  - checkout: self
+    displayName: 'Checkout source'
+
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '$(pythonVersion)'
+    displayName: 'Set up Python'
+
+  - script: |
+      python -m pip install --upgrade pip
+      pip install -r requirements.txt
+    displayName: 'Install dependencies'
+
+  - script: |
+      python -m unittest discover -s tests -v
+    displayName: 'Run unit tests'
+
+  - task: ArchiveFiles@2
+    inputs:
+      rootFolderOrFile: '$(Build.SourcesDirectory)'
+      includeRootFolder: false
+      archiveType: zip
+      archiveFile: '$(Build.ArtifactStagingDirectory)/movie-recommendation.zip'
+      replaceExistingArchive: true
+      verbose: true
+    displayName: 'Package application'
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)/movie-recommendation.zip'
+      ArtifactName: 'movie-recommendation'
+      publishLocation: 'Container'
+    displayName: 'Publish build artifact'

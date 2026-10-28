@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ movie.title }} · CineMatch{% endblock %}
+{% block content %}
+<a class="back-link" href="{{ url_for('index') }}">← Back to discover</a>
+<section class="detail-hero">
+  <div class="detail-poster poster poster-{{ (movie.id % 8) + 1 }}"><span class="poster-mark">{{ movie.title[0] }}</span><span class="poster-title">{{ movie.title }}</span><span class="poster-year">{{ movie.year }}</span></div>
+  <div class="detail-copy"><p class="eyebrow">MOVIE PROFILE</p><h1>{{ movie.title }}</h1><div class="detail-meta"><span>{{ movie.year }}</span><span>★ {{ "%.1f"|format(movie.rating) }} / 10</span></div><div class="genre-list">{% for genre in movie.genres %}<span>{{ genre }}</span>{% endfor %}</div><p class="description">{{ movie.description }}</p>
+    {% if movie.id in watchlist %}<form method="post" action="{{ url_for('remove_watchlist', movie_id=movie.id) }}"><button class="primary-button secondary" type="submit">✓ Remove from watchlist</button></form>{% else %}<form method="post" action="{{ url_for('add_watchlist', movie_id=movie.id) }}"><button class="primary-button" type="submit">＋ Add to watchlist</button></form>{% endif %}
+  </div>
+</section>
+<section class="section-heading"><div><p class="eyebrow">BECAUSE YOU LIKED THIS</p><h2>Recommended for you</h2></div></section>
+<div class="movie-grid">
+{% for item in recommendations %}
+<article class="movie-card"><a class="poster poster-{{ (item.id % 8) + 1 }}" href="{{ url_for('movie_detail', movie_id=item.id) }}"><span class="poster-mark">{{ item.title[0] }}</span><span class="poster-title">{{ item.title }}</span><span class="poster-year">{{ item.year }}</span><span class="poster-open">VIEW FILM ↗</span></a><div class="movie-info"><div class="movie-title-line"><a class="movie-title" href="{{ url_for('movie_detail', movie_id=item.id) }}">{{ item.title }}</a><span class="rating">★ {{ "%.1f"|format(item.rating) }}</span></div><p class="genres">{{ item.genres|join(" · ") }}</p></div></article>
+{% endfor %}
+</div>
+{% endblock %}
